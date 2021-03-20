@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PokemonQuiz.Data;
 using PokemonQuiz.Repositories;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 
 namespace PokemonQuiz
@@ -33,6 +34,13 @@ namespace PokemonQuiz
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+            services.AddDbContextPool<DatabaseContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(
+                        Configuration.GetConnectionString("DefaultConnection"),
+                        new MySqlServerVersion(new Version(8, 0, 21)) // use MariaDbServerVersion for MariaDB
+            ));
 
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
